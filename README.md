@@ -103,3 +103,72 @@ Nx Cloud pairs with Nx in order to enable you to build and test code more rapidl
 Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
 
 Visit [Nx Cloud](https://nx.app/) to learn more.
+
+# Notatki do prezentacji
+Najlepije przechodzić między tagami i patrzec co sie zmienia np. git checkout m1
+
+## M1
+### Push Pull system
+Zamiast mieć serwis który tylko ma metody które zwracają observable, można podejść do tego, że jest serwis z BehvaiorSubject, który trzyma stan, a metody zwracają voidy i tylko updatują obiekt. Przykład CartSerice
+### shareReplay({ bufferSize: 1, refCount: true })
+ShareReplay zawsze dodawać, refCount = true, bo inaczej nawet jak uzywamy async pipe to będzie dalej żyła subsrypcja, chyba, że mamy singletona i chcemy, żeby żył observable nawet gdy nie ma żadnej subsrypcji.
+### Cel komponentu
+Functions over data => bardzo proste przetworzenia danych tylko w komponencie, logika powinna być wydzielona w inne miejsce
+
+## M2: Action, reducer $ selector
+### Action
+Action to zwykły obiekt który jest jakby eventem i potem torzymy go przy pomocy factory. Traktować action jako event a nie jako Command, czyli OtworzonoEkran, a nie PobierzProdukty. Trzymać je tam gdzie one sa wywoływane, a nie handlowane.
+export const login = createAction(
+'[Login Page] Login',
+props<{username: string; password: string;}>(),
+)
+### Reducer
+Reducer => Hanlder eventów w zasadzie, powinien byc tylko jeden reducer który zarządza danymi rzeczami?, żeby nie było że jest wiele reducerów z tymi samymi akcjami
+
+### Selector
+Select => funkcja do pozyskania danych ze store
+
+### StoreDevtoolModule
+Narzędzie do debugowania, przeglądania jakie są stany.
+
+### ts.dev/style/
+Style Guide TypeScript
+
+## M3: Efects
+### Efects: asychnroncizne zapytania, regaują na akcje i tworzą nowe.
+Efekty to klasy (injectable), wiele akcji może rozpocząc dany efekt.
+Jka mamy terminalny efekt to dodajemy, {dispatch: false}
+
+## M4: Feature State
+### Feature State
+Żeby nie trzymać golabl state to możemy mieć feature state Ogólnie to polega na stwrozyć consstant key, który jest taki sam jak w global state, i potem w module, w którym chcemy tym zarządzać uzyjemy .forFeature
+
+### Selector
+Używać selectorów bo możemy robić takie chainy, że będą zależały od siebie oraz wydajnościowo to ejst duzo lepsze, bo patrzy na stany, czy sie nie zmieniły stany i nie zrobi rekalkulacji
+Gdy uzywamy selectorów przekazujemy 
+
+this.store.select(<naszSelektor>) jest to trochę jak Query w CQRS, wyciaga to ze store, i możemy miec kilka, np. przechowujemy w store listę obiektów i możemy dodać selektor który bazuje na tamtym i potem np. zlicza liczbe obiektów
+
+## M5 Efekty które same się inicjalizuja
+Można stworzyć efekty, które same sie inicjalizują np. na podstawie timera
+
+## M6
+Czasami chcemy, żeby od razu pokazać zmiane, nawet jak nie wiemy kiedy sie powiedzie, a dopiero potem hanldować błąd
+
+## M7 Router store
+Trzymanie w store, informacji o routingu, jaki jest url itd. nie trzeba dzieki temu za każdym razem pisać, tych rzeczy od nowa, już jest zaimplementowany routerReducer i nie musisz tego robić wielokrotnie, trzeba to tylko podpiąc w routerModule
+
+## M8 Combining Selectors
+Ogólnie mózg rozjebany, tutaj sie robi cała magia, wykorzystywanie kilku rzeczy trzymanych w store, w tym np. scieżki która jest w url, i możesz uzywać w efektach selektorów.
+
+## M9 View Model
+Ogólnie łączenie selektorów w View Model, to akurat robiliśmy wiele razy u nas w smubob
+
+## M10 Entities
+Zarządzanie kolekcją objektów w js jest upierdliwe, jest paczka Entities, która pozwala wrapowac kolekcje obiektów, żeby był łatwiejszy dostęp do Kolekcji, którę jest jak w EntityFramework
+
+## M11 call state
+Przetrzymywanie infomracji, o zapytaniu http
+
+## M12 Component store
+W zasadzie to jest to serwis, który uzywalismy w smubobie, potem wew tego component store, korzytamy z global store. Zawiera całą logikę ekranu, wywołuje global store, albo inne metody z serwisów.
